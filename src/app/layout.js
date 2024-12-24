@@ -10,6 +10,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        <meta name="cryptomus" content="9d9ae1ed" />
+      </head>
       <body>
         <SessionWrapper>
           {children}
