@@ -1,7 +1,7 @@
 import { connectDB } from "@/utils/database";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuid } from 'uuid';
 import userSchema from "@/models/UserModels";
 
 export async function POST(req, res){
@@ -10,7 +10,7 @@ export async function POST(req, res){
 
     const {email, username, password, confirmPassword} = body;    
 
-    const {error} = userSchema.validate(body, {abortEarly: false});
+    const {error} = userSchema.validate(body);
 
     if(error){
         return new Response(JSON.stringify(
@@ -43,7 +43,7 @@ export async function POST(req, res){
             email,
             username,
             password: hashedPassword,
-            id: uuidv4(),
+            id: uuid().substring(0, 6),
             googleUser: false,
         });
 

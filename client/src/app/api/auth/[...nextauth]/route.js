@@ -2,7 +2,7 @@ import { connectDB } from "@/utils/database";
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import User from "@/models/User";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuid } from 'uuid';
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 
@@ -22,6 +22,16 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+        
+        if(!credentials.email) {
+          console.log('Email is required');
+          return Promise.reject(new Error('Email is required'));
+        }
+
+        if(!credentials.password) {
+          console.log('Password is required');
+          return Promise.reject(new Error('Password is required'));
+        }
         try {
           // Logga credentials för att kontrollera inkommande data
           console.log('Credentials:', credentials);
@@ -31,22 +41,22 @@ const handler = NextAuth({
       
           // Hitta användaren i databasen
           const user = await User.findOne({ email: credentials.email });
-          console.log('User found:', user);
       
           if (!user) {
             console.log('User not found');
-            return null; // Returnera null om användaren inte hittades
+            return Promise.reject(new Error('User not found'));
           }
       
           // Jämför lösenordet från formuläret med lösenordet i databasen
           const isValid = await bcrypt.compare(credentials.password, user.password);
           if (!isValid) {
             console.log('Invalid password');
-            return null; // Returnera null om lösenorden inte matchar
+            return Promise.reject(new Error('Invalid password or email'));
           }
-      
-          // Returnera användaren om lösenorden matchar
-          return { id: user.id, email: user.email, name: user.name, image: user.image, isAdmin: user.isAdmin, isWorker: user.isWorker };
+
+          console.log('Authenticated User:', user);
+    
+          return user;
         } catch (error) {
           console.error('Error during authorization:', error);
           return null;
@@ -55,7 +65,7 @@ const handler = NextAuth({
     }),
   ],
   pages: {
-    signIn: "/auth/signin", // Om du vill anpassa sign-in sidan
+    signIn: "/auth/signin",
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -70,20 +80,24 @@ const handler = NextAuth({
 
     // När sessionen skapas, hämta användardata från databasen och lägg till i sessionen
     async session({ session, token }) {
-      // Anslut till databasen varje gång sessionen skapas
-      await connectDB();
-      const user = await User.findOne({ email: token.email });
 
-      if (user) {
-        session.user.id = user.id;
-        session.user.isAdmin = user.isAdmin;
-        session.user.isWorker = user.isWorker;
-        session.user.name = user.name || null;
-        session.user.image = user.image || null;
-        session.user.givenName = user.givenName || null;
+      try {
+        await connectDB();
+        const user = await User.findOne({ email: token.email });
+        if (user) {
+          session.user.id = user.id;
+          session.user.isAdmin = user.isAdmin;
+          session.user.isWorker = user.isWorker;
+          session.user.name = user.name || null;
+          session.user.image = user.image || null;
+          session.user.givenName = user.givenName || null;
+          session.user.username = user.username || null;
+        }
+        console.log('Session: expires', session.expires);
+      } catch (error) {
+        console.error('Error during session creation:', error);
       }
 
-      console.log('Session:', session);
       return session;
     },
 
@@ -107,7 +121,7 @@ const handler = NextAuth({
               isAdmin: false,
               isWorker: false,
               googleUser: true,
-              id: uuidv4(),
+              id: uuid().substring(0, 6)
             });
       
             await newUser.save();
@@ -136,12 +150,11 @@ const handler = NextAuth({
           }
       
           // Lösenordsvalidering om det behövs
-          const isPasswordValid = await bcrypt.compare(credentials.password, userExist.password);
-          console.log('Password valid:', isPasswordValid);
+          const isPasswordValid = bcrypt.compare(credentials.password, userExist.password);
       
           if (!isPasswordValid) {
             console.log('Invalid password');
-            return null;  // Om lösenordet inte är korrekt
+            return false;  // Om lösenordet inte är korrekt
           }
       
           return true;  // När inloggning via Credentials är framgångsrik
@@ -162,6 +175,20 @@ const handler = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
+    maxAge: 15 * 60,
+    updateAge: 3 * 60,
+    jwt: true,
+  },
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true, // Gör att cookie inte kan nås via JavaScript
+        secure: process.env.NODE_ENV === "production", // Endast för https i produktion
+        path: "/",
+        sameSite: "lax",
+      },
+    },
   },
 });
 

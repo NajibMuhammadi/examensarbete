@@ -1,6 +1,6 @@
 import { Button } from "@mui/material"
 
-const CustomBtn = ({type, title, handleClick, backgroundColor, color, icon, fullwidth}) => {
+const CustomBtn = ({title, backgroundColor, color, icon, fullwidth, handleClick, type}) => {
   return (
     <Button
         sx={{
@@ -18,7 +18,7 @@ const CustomBtn = ({type, title, handleClick, backgroundColor, color, icon, full
             '&:hover': {
                 backgroundColor,
                 opacity: 0.9
-            }
+            }  
         }}
         onClick={handleClick}
     >

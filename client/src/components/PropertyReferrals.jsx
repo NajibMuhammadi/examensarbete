@@ -53,7 +53,7 @@ const PropertyReferrals = () => {
         p={4}
         id='chart'
         bgcolor='#fcfcfc'
-        minWidth={490}
+        flex={1.2}
         display='flex'
         flexDirection='column'
         borderRadius='15px'
@@ -62,6 +62,7 @@ const PropertyReferrals = () => {
             fontSize={18}
             fontWeight={700}
             color="#11142d"
+            variant="h2"
         >
             Property Referrals
         </Typography>

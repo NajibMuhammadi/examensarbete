@@ -8,6 +8,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { ToastContainer, toast } from "react-toastify";
 
 const label = {inputProps: { 'aria-label': 'Checkbox demo' }};
 
@@ -36,9 +37,10 @@ const Page = () => {
     });
 
     if (res?.error) {
-      alert('Failed to sign in');
+      toast.error(res.error);
     } else {
-      router.push('/dashboard'); // Redirect to dashboard after successful login
+      toast.success("Logged in successfully");
+      router.push('/dashboard');
     }
   }
 
@@ -47,10 +49,6 @@ const Page = () => {
       router.push("/dashboard");
     }
   }, [status, router]);
-
-  if (status === "loading") {
-    return <p>Loading...</p>;
-  }
 
   return (
     <Box
@@ -62,6 +60,18 @@ const Page = () => {
         background:"radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))"
       }}
     >
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable={false}
+        pauseOnHover={false}
+        theme="dark"
+        />
       <Stack
         borderRadius={2}
         border="1px solid rgb(51, 60, 77);"
@@ -73,7 +83,7 @@ const Page = () => {
         boxShadow= 'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px;'
       >
         <Typography variant="h4" color="white">
-          Sitemark
+          NS-dashboard
         </Typography>
         <Typography variant="h5" color="white">
           Sign In

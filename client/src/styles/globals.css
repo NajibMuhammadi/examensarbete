@@ -5,8 +5,24 @@
   margin: 0;
 }
 
+.property_details-img {
+  width: 100%;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
+  }
+}
+
+@media (max-width: 600px) {
+  .property_details-img {
+    height: 350px;
+  }
+}
+
+@media  (max-width: 768px) {
+  .property_details-img {
+    height: 400px;
   }
 }

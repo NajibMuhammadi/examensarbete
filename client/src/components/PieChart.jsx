@@ -23,12 +23,13 @@ const PieChart = ({title, value, series, colors,}) => {
         <Stack direction='column'>
             <Typography
                 fontSize={14}
-                color="gray"
+                color="#58585F"
             >{title}</Typography>
             <Typography
                 fontSize={25}
                 fontWeight={700}
                 color='black'
+                variant="h2"
                 mt={1}
             >{value}</Typography>
         </Stack>

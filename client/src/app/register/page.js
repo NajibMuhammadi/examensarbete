@@ -5,6 +5,9 @@ import {VisibilityOff, Visibility} from "@mui/icons-material";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import google from "../../../public/google.png";
+import { ToastContainer, toast } from "react-toastify";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const page = () => {
   const [showpassword, setShowPassword] = useState(false);
@@ -17,6 +20,8 @@ const page = () => {
     confirmPassword: "",
   });
 
+  const router = useRouter();
+
   const handleChange = (e) =>{
     setFormData({
       ...formData,
@@ -26,34 +31,28 @@ const page = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
-      return setMessage("Vänligen fyll i alla fält");
-    }
-  
-    if (formData.password !== formData.confirmPassword) {
-      return setMessage("Lösenorden matchar inte");
-    }
   
     try {
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json", // Ser till att rätt header är satt för JSON
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData), // Serialiserar formData korrekt till JSON
+        body: JSON.stringify(formData),
       });
   
-      const data = await response.json(); // Försök att läsa JSON från svaret
+      const data = await response.json();
   
       if (response.ok) {
-        setMessage(data.message);
+        toast.success(data.message);
+        setTimeout(() => {
+          router.push("/");
+        }, 2000);
       } else {
-        setMessage(data.message);
+        toast.error(data.message);
       }
     } catch (error) {
-      setMessage("Något gick fel");
-      console.error(error);
+      toast.error("Något gick fel", error);
     }
   };
 
@@ -69,6 +68,18 @@ const page = () => {
         background:"radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))"
       }}
     >
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable={false}
+        pauseOnHover={false}
+        theme="dark"
+      />
       <Stack
         borderRadius={2}
         border="1px solid rgb(51, 60, 77);"
@@ -80,7 +91,7 @@ const page = () => {
         boxShadow= 'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px;'
       >
         <Typography variant="h4" color="white">
-          Sitemark
+          NS-dashboard
         </Typography>
         <Typography variant="h5" color="white">
             Register
@@ -265,6 +276,13 @@ const page = () => {
             <img src={google.src} alt="google" style={{ width: 20, height: 20, marginRight: 10 }}/>
             Sign In with Google
           </Button>
+          <Typography variant="body2" color="white" textAlign="center"
+            sx={{ 
+              cursor: "pointer",
+            }}
+          >
+            Already have an account?  <Link href="/" style={{color: 'white'}}>Sign In</Link>
+          </Typography>
       </Stack>
     </Box>
   );

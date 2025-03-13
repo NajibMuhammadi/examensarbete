@@ -1,10 +1,10 @@
 export const TotalRevenueSeries = [
   {
-    name: "Last Month",
+    name: "Last Year",
     data: [183, 124, 115, 85, 143, 143, 96],
   },
   {
-    name: "Running Month",
+    name: "This Year",
     data: [95, 84, 72, 44, 108, 108, 47],
   },
 ];
