@@ -8,10 +8,13 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-    origin: "https://examensarbete-s8hb.onrender.com",
-    methods: ["GET", "POST"],
-    credentials: true
-  }
+        origin: [
+            "https://examensarbete-s8hb.onrender.com",  
+            "https://examensarbete-ten.vercel.app"  
+        ],
+        methods: ["GET", "POST"],
+        credentials: true
+    }
 });
 
 const messages = [];
