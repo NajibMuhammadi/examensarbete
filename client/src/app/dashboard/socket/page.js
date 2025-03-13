@@ -5,7 +5,7 @@ import io from 'socket.io-client';
 import {TextField, Button, List, ListItem, ListItemText, Typography, Box, ListItemAvatar, Avatar } from '@mui/material';
 import { useSession } from 'next-auth/react';
 
-const SOCKET_URL = 'http://localhost:8088'; 
+const SOCKET_URL = 'https://examensarbete-s8hb.onrender.com'; 
 
 const SocketApp = () => {
   const { data: session } = useSession(); 

@@ -8,19 +8,17 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: '*',
-    }
+    origin: "https://examensarbete-s8hb.onrender.com",
+    methods: ["GET", "POST"],
+    credentials: true
+  }
 });
 
 const messages = [];
 
 io.on('connection', (socket) => {
     console.log(`User connected: ${socket.id}`);
-
-    // Skicka tidigare meddelanden till den nya användaren
     socket.emit('previousMessages', messages);
-
-    // Lyssna på 'sendMessage' från klienten
     socket.on('sendMessage', (data) => {
         const { text, userName, image } = data;
         const message = { text, userName, image, timestamp: Date.now() };
