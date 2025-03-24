@@ -1,7 +1,7 @@
 
 # Viktigt att veta innan du testar. 
  - Om du väljer att logga in med Google-konton, samtycker du till att viss informatio,  såsom din profilbild, ditt för- och efternamn, sparas i min databas. Jag lagrar dock inga känsliga uppgifter.
- - När du loggar in med ett Google-konto har du endast vanliga användarrättigheter. Om du istället väljer att logga in manuellt eller logga in som admin så kan du använda testkonton.
+ - När du loggar in med ett Google-konto har du endast vanliga användarrättigheter. Om du istället väljer att logga in manuellt eller logga in som admin så kan du använda testkonton (skrivna med små bokstäver)
    
 | Email | lösenord |
 | :-------- | :------- | 
