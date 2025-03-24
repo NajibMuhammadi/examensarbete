@@ -33,13 +33,9 @@ const handler = NextAuth({
           return Promise.reject(new Error('Password is required'));
         }
         try {
-          // Logga credentials för att kontrollera inkommande data
-          console.log('Credentials:', credentials);
-      
-          // Anslut till databasen
+
           await connectDB();
-      
-          // Hitta användaren i databasen
+
           const user = await User.findOne({ email: credentials.email });
       
           if (!user) {
@@ -47,15 +43,12 @@ const handler = NextAuth({
             return Promise.reject(new Error('User not found'));
           }
       
-          // Jämför lösenordet från formuläret med lösenordet i databasen
           const isValid = await bcrypt.compare(credentials.password, user.password);
           if (!isValid) {
             console.log('Invalid password');
             return Promise.reject(new Error('Invalid password or email'));
           }
-
-          console.log('Authenticated User:', user);
-    
+          
           return user;
         } catch (error) {
           console.error('Error during authorization:', error);
@@ -69,7 +62,6 @@ const handler = NextAuth({
   },
   callbacks: {
     async jwt({ token, user }) {
-      // Om user är definierad (vid första inloggning)
       if (user) {
         token.id = user.id;
         token.isAdmin = user.isAdmin;
@@ -78,7 +70,6 @@ const handler = NextAuth({
       return token; 
     },
 
-    // När sessionen skapas, hämta användardata från databasen och lägg till i sessionen
     async session({ session, token }) {
 
       try {
@@ -102,13 +93,11 @@ const handler = NextAuth({
     },
 
     async signIn({ credentials, account, profile }) {
-      // Om användaren loggar in med Google
       if (account.provider === "google") {
-        console.log('Google Profile:', profile);  // Här får vi profile för Google-login
         try {
           await connectDB();
       
-          const userExist = await User.findOne({ email: profile.email });  // Använd profile för att hämta användaren
+          const userExist = await User.findOne({ email: profile.email });
           console.log('User existence check:', userExist);
       
           if (!userExist) {
@@ -128,39 +117,37 @@ const handler = NextAuth({
             console.log('New user created:', newUser);
           }
       
-          return true;  // När inloggning via Google är framgångsrik
+          return true;  
         } catch (error) {
           console.log('Error in signIn callback (Google):', error);
-          return false;  // Om något går fel vid Google-inloggning
+          return false; 
         }
       }
-    
-      // Om användaren loggar in med Credentials
+  
       if (account.provider === "credentials") {
-        console.log('Credentials data:', credentials);  // Här får vi credentials via account.provider
+        console.log('Credentials data:', credentials); 
         try {
           await connectDB();
       
-          const userExist = await User.findOne({ email: credentials.email });  // credentials.email för att hitta användaren
+          const userExist = await User.findOne({ email: credentials.email }); 
           console.log('User existence check:', userExist);
       
           if (!userExist) {
             console.log('User not found');
-            return null;  // Returnera null om användaren inte hittas
+            return null;  
           }
-      
-          // Lösenordsvalidering om det behövs
+  
           const isPasswordValid = bcrypt.compare(credentials.password, userExist.password);
       
           if (!isPasswordValid) {
             console.log('Invalid password');
-            return false;  // Om lösenordet inte är korrekt
+            return false;
           }
       
-          return true;  // När inloggning via Credentials är framgångsrik
+          return true;  
         } catch (error) {
           console.log('Error in signIn callback (Credentials):', error);
-          return null;  // Om något går fel vid inloggning med Credentials
+          return null; 
         }
       }
     
@@ -183,8 +170,8 @@ const handler = NextAuth({
     sessionToken: {
       name: `next-auth.session-token`,
       options: {
-        httpOnly: true, // Gör att cookie inte kan nås via JavaScript
-        secure: process.env.NODE_ENV === "production", // Endast för https i produktion
+        httpOnly: true, 
+        secure: process.env.NODE_ENV === "production",
         path: "/",
         sameSite: "lax",
       },
