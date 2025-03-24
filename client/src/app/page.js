@@ -210,22 +210,6 @@ const Page = () => {
           <img src={google.src} alt="google" style={{ width: 20, height: 20, marginRight: 10 }}/>
           Sign In with Google
         </Button>
-
-        <Button
-          variant="contained"
-          fullWidth
-          sx={{
-            bgcolor: "hsl(220, 35%, 3%)", 
-            color: "white", 
-            borderRadius: 2,
-            padding: 1.4,
-            border: "1px solid hsl(220, 20%, 25%)",
-          }}
-        >
-          <img src={google.src} alt="google" style={{ width: 20, height: 20, marginRight: 10 }}/>
-          Sign In with Facebook
-        </Button>
-
         <Typography variant="body2" color="white" textAlign="center"
           sx={{ 
             cursor: "pointer",
